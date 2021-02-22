@@ -33,27 +33,6 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
-        $this->renderable(function (AuthenticationException $e, $request) {
-            return $this->unauthenticated($request, $e);
-        });
-        $this->renderable(function (ValidationException $e, $request) {
-            return $this->convertValidationExceptionToResponse($e, $request);
-        });
-        $this->renderable(function (NotFoundHttpException $e, $request) {
-            return $this->errorResponse("Does not exists any model with the specified identificator", 404);
-        });
-    }
-
     public function render($request, Throwable $e)
     {
         if ($e instanceof ModelNotFoundException) {
@@ -81,5 +60,26 @@ class Handler extends ExceptionHandler
     {
         $errors = $e->validator->errors()->getMessages();
         return $this->errorResponse($errors, 422);
+    }
+
+    /**
+     * Register the exception handling callbacks for the application.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $this->reportable(function (Throwable $e) {
+            //
+        });
+        $this->renderable(function (AuthenticationException $e, $request) {
+            return $this->unauthenticated($request, $e);
+        });
+        $this->renderable(function (ValidationException $e, $request) {
+            return $this->convertValidationExceptionToResponse($e, $request);
+        });
+        $this->renderable(function (NotFoundHttpException $e, $request) {
+            return $this->errorResponse("Does not exists any model with the specified identificator", 404);
+        });
     }
 }
