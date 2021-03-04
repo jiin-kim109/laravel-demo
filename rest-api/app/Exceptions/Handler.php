@@ -3,11 +3,13 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponser;
-use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -33,35 +35,6 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    public function render($request, Throwable $e)
-    {
-        if ($e instanceof ModelNotFoundException) {
-            $modelName = strtolower(class_basename($e->getModel()));
-            return $this->errorResponse("Does not exists any {$modelName} with the specified identificator", 404);
-        }
-    }
-
-    /**
-     * Convert an authentication exception into a response.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Illuminate\Auth\AuthenticationException  $exception
-     * @return \Illuminate\Http\Response
-     */
-    protected function unauthenticated($request, AuthenticationException $exception)
-    {
-        if ($request->expectsJson()) {
-            return response()->json(['error' => 'Unauthenticated.'], 401);
-        }
-        return redirect()->guest('login');
-    }
-
-    protected function convertValidationExceptionToResponse(ValidationException $e, $request)
-    {
-        $errors = $e->validator->errors()->getMessages();
-        return $this->errorResponse($errors, 422);
-    }
-
     /**
      * Register the exception handling callbacks for the application.
      *
@@ -73,13 +46,34 @@ class Handler extends ExceptionHandler
             //
         });
         $this->renderable(function (AuthenticationException $e, $request) {
-            return $this->unauthenticated($request, $e);
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Unauthenticated.'], 401);
+            }
+            return redirect()->guest('login');
+        });
+        $this->renderable(function (AuthorizationException $e, $request) {
+            return $this->errorResponse($e->getMessage(), 401);
         });
         $this->renderable(function (ValidationException $e, $request) {
-            return $this->convertValidationExceptionToResponse($e, $request);
+            $errors = $e->validator->errors()->getMessages();
+            return $this->errorResponse($errors, 422);
         });
         $this->renderable(function (NotFoundHttpException $e, $request) {
             return $this->errorResponse("Does not exists any model with the specified identificator", 404);
         });
+        $this->renderable(function (MethodNotAllowedHttpException $e, $request) {
+            return $this->errorResponse('The specified method for the rquest is invalid', 405);
+        });
+        $this->renderable(function (HttpException $e, $request) {
+            return $this->errorResponse($e->getMessage(), $e->getStatusCode());
+        });
+        $this->renderable(function (QueryException $e, $request) {
+            $errorCode = $e->errorInfo[1];
+            if ($errorCode == 1451) {
+                return $this->errorResponse('Cannot remove this resource permanently. It is related with any other resource', 409);
+            }
+        });
+
+        return $this->errorResponse('Unexpected Exception. Try later', 500);
     }
 }

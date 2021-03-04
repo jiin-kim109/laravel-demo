@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/vagrant/quickstart":{"type":null,"mount_options":["uid=1000","gid=1000"],"guestpath":"/home/vagrant/quickstart","hostpath":"C:/Users/Jiin/Desktop/dev/laravel-demo/quickstart","disabled":false,"__vagrantfile":true}}}
