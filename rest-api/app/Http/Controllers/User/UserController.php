@@ -5,7 +5,6 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends ApiController
 {
