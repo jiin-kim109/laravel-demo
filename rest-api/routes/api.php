@@ -34,7 +34,10 @@ Route::resource('buyer.categories', Controllers\Buyer\BuyerCategoryController::c
  * Sellers
  */
 Route::resource('seller', Controllers\Seller\SellerController::class, ['only' => ['index', 'show']]);
-
+Route::resource('seller.transactions', Controllers\Seller\SellerTransactionController::class, ['only' => ['index']]);
+Route::resource('seller.categories', Controllers\Seller\SellerCategoryController::class, ['only' => ['index']]);
+Route::resource('seller.buyer', Controllers\Seller\SellerBuyerController::class, ['only' => ['index']]);
+Route::resource('seller.products', Controllers\Seller\SellerProductController::class, ['except' => ['create', 'show', 'edit']]);
 
 /**
  * Categories
@@ -42,7 +45,7 @@ Route::resource('seller', Controllers\Seller\SellerController::class, ['only' =>
 Route::resource('categories', Controllers\Category\CategoryController::class, ['except' => ['create', 'edit']]);
 Route::resource('categories.products', Controllers\Category\CategoryProductController::class, ['only' => ['index']]);
 Route::resource('categories.seller', Controllers\Category\CategorySellerController::class, ['only' => ['index']]);
-Route::resource('categories.transaction', Controllers\Category\CategoryTransactionController::class, ['only' => ['index']]);
+Route::resource('categories.transactions', Controllers\Category\CategoryTransactionController::class, ['only' => ['index']]);
 Route::resource('categories.buyer', Controllers\Category\CategoryBuyerController::class, ['only' => ['index']]);
 
 /**
@@ -56,3 +59,11 @@ Route::resource('transaction.sellers', Controllers\Transaction\TransactionSeller
  * User
  */
 Route::resource('user', Controllers\User\UserController::class, ['only' => ['index', 'show', 'store']]);
+
+/**
+ * Product
+ */
+Route::resource('products', Controllers\Product\ProductController::class, ['except' => ['create', 'edit']]);
+Route::resource('products.transactions', Controllers\Product\ProductTransactionController::class, ['only' => ['index']]);
+Route::resource('products.buyer', Controllers\Product\ProductBuyerController::class, ['only' => ['index']]);
+Route::resource('products.categories', Controllers\Product\ProductCategoryController::class, ['except' => ['create', 'show', 'edit']]);
