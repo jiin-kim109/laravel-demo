@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Product;
 use App\Http\Controllers\ApiController;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductCategoryController extends ApiController
 {
@@ -39,7 +42,6 @@ class ProductCategoryController extends ApiController
      */
     public function store(Request $request)
     {
-        //
     }
 
     /**
@@ -84,8 +86,14 @@ class ProductCategoryController extends ApiController
      * @param  \App\Models\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product, Category $category)
     {
-        //
+        if (!$product->categories()->find($category->id)) {
+            return $this->errorResponse('The specified category is not a category of this product', 404);
+        }
+
+        $product->categories()->detach($category->id);
+
+        return $this->showAll($product->categories);
     }
 }

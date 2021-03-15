@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Buyer;
 
 use App\Http\Controllers\ApiController;
-use App\Models\Buyer;
+use App\Models\w;
 use Illuminate\Http\Request;
 
 class BuyerProductController extends ApiController

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Transformers\BuyerTransformer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,6 +14,8 @@ class Product extends Model
 
     const AVAILABLE_PRODUCT = 'available';
     const UNAVAILABLE_PRODUCT = 'unavailable';
+
+    public $transformer = BuyerTransformer::class;
 
     protected $dates = ['deleted_at'];
 

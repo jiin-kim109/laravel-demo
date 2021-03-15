@@ -67,3 +67,4 @@ Route::resource('products', Controllers\Product\ProductController::class, ['exce
 Route::resource('products.transactions', Controllers\Product\ProductTransactionController::class, ['only' => ['index']]);
 Route::resource('products.buyer', Controllers\Product\ProductBuyerController::class, ['only' => ['index']]);
 Route::resource('products.categories', Controllers\Product\ProductCategoryController::class, ['except' => ['create', 'show', 'edit']]);
+Route::resource('products.buyer.transactions', Controllers\Product\ProductBuyerTransactionController::class, ['except' => ['create', 'show', 'edit']]);
